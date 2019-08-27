@@ -1,0 +1,568 @@
+Enter password: ****
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 6
+Server version: 5.5.61 MySQL Community Server (GPL)
+
+Copyright (c) 2000, 2018, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show databases
+    -> ;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| asmnt2             |
+| db                 |
+| dhole              |
+| mydb               |
+| mysql              |
+| neha               |
+| performance_schema |
+| test               |
+| textdatatype       |
++--------------------+
+10 rows in set (0.09 sec)
+
+mysql> use asmnt2;
+Database changed
+mysql> CREATE TABLE Book
+    -> (
+    ->   BookID int AUTO_INCREMENT
+    ->   primary key,
+    ->   BookName varchar(50) not null,
+    ->   Price decimal(6, 2)
+    -> );
+Query OK, 0 rows affected (0.11 sec)
+
+mysql>
+mysql>
+mysql> INSERT INTO Book
+    -> (BookName, Price) VALUES
+    -> ('MySQL for dummies', 350),
+    -> ('MySQL for Developers', 560);
+Query OK, 2 rows affected (0.18 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql>
+mysql> INSERT INTO Book
+    -> (BookName, Price) VALUES
+    -> ('MySQL for dummies', 350),
+    -> ('MySQL for2 dummies', 370),
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 4
+mysql> INSERT INTO Book
+    -> (BookName, Price) VALUES
+    -> ('MySQL for Developers For TP', 5620);
+Query OK, 1 row affected (0.02 sec)
+
+mysql> Select * from Book;
++--------+-----------------------------+---------+
+| BookID | BookName                    | Price   |
++--------+-----------------------------+---------+
+|      1 | MySQL for dummies           |  350.00 |
+|      2 | MySQL for Developers        |  560.00 |
+|      3 | MySQL for Developers For TP | 5620.00 |
++--------+-----------------------------+---------+
+3 rows in set (0.00 sec)
+
+mysql> INSERT INTO Book
+    -> (BookName, Price) VALUES
+    -> ('HTML5 Step by Step', NULL),
+    -> ('Java Unleashed', -560);
+Query OK, 2 rows affected (0.06 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> Select * from Book;
++--------+-----------------------------+---------+
+| BookID | BookName                    | Price   |
++--------+-----------------------------+---------+
+|      1 | MySQL for dummies           |  350.00 |
+|      2 | MySQL for Developers        |  560.00 |
+|      3 | MySQL for Developers For TP | 5620.00 |
+|      4 | HTML5 Step by Step          |    NULL |
+|      5 | Java Unleashed              | -560.00 |
++--------+-----------------------------+---------+
+5 rows in set (0.00 sec)
+
+mysql> DELETE FROM Book
+    ->   WHERE BookID = 4;
+Query OK, 1 row affected (0.06 sec)
+
+mysql> Select * from Book;
++--------+-----------------------------+---------+
+| BookID | BookName                    | Price   |
++--------+-----------------------------+---------+
+|      1 | MySQL for dummies           |  350.00 |
+|      2 | MySQL for Developers        |  560.00 |
+|      3 | MySQL for Developers For TP | 5620.00 |
+|      5 | Java Unleashed              | -560.00 |
++--------+-----------------------------+---------+
+4 rows in set (0.00 sec)
+
+mysql> ALTER TABLE Book
+    ->   ADD CONSTRAINT Book_Price_CHK
+    ->   CHECK (Price >= 200
+    ->           AND Price <= 3000
+    ->         );
+Query OK, 0 rows affected (0.06 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO Book
+    -> (BookName, Price) VALUES
+    -> ('HTML5 Unleashed', NULL);
+Query OK, 1 row affected (0.02 sec)
+
+mysql> INSERT INTO Book
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1
+mysql> Select * from Book;
++--------+-----------------------------+---------+
+| BookID | BookName                    | Price   |
++--------+-----------------------------+---------+
+|      1 | MySQL for dummies           |  350.00 |
+|      2 | MySQL for Developers        |  560.00 |
+|      3 | MySQL for Developers For TP | 5620.00 |
+|      5 | Java Unleashed              | -560.00 |
+|      6 | HTML5 Unleashed             |    NULL |
++--------+-----------------------------+---------+
+5 rows in set (0.00 sec)
+
+mysql> INSERT INTO Book
+    -> (BookName, Price) VALUES
+    -> ('.Net Unleashed', 100);
+Query OK, 1 row affected (0.02 sec)
+
+mysql> Select * from Book;
++--------+-----------------------------+---------+
+| BookID | BookName                    | Price   |
++--------+-----------------------------+---------+
+|      1 | MySQL for dummies           |  350.00 |
+|      2 | MySQL for Developers        |  560.00 |
+|      3 | MySQL for Developers For TP | 5620.00 |
+|      5 | Java Unleashed              | -560.00 |
+|      6 | HTML5 Unleashed             |    NULL |
+|      7 | .Net Unleashed              |  100.00 |
++--------+-----------------------------+---------+
+6 rows in set (0.00 sec)
+
+mysql> CREATE TABLE BookTran
+    -> (
+    ->   TrnID int AUTO_INCREMENT
+    ->     primary key,
+    ->   TrnDate datetime,
+    ->   BookID int REFERENCES
+    ->   Book(BookID),
+    ->   MemberID int,
+    ->   CONSTRAINT BookTran_MemberID_FK
+    ->    FOREIGN KEY(MemberID)
+    ->    REFERENCES Member(MemberID)
+    -> );
+ERROR 1005 (HY000): Can't create table 'asmnt2.booktran' (errno: 150)
+mysql> CREATE TABLE Member
+    -> (
+    ->   MemberID int AUTO_INCREMENT
+    ->   primary key,
+    ->   FName varchar(20) not null,
+    ->   MName varchar(10),
+    ->   LName varchar(20) not null,
+    ->   Mem_DOJ date,
+    ->   Email varchar(30),
+    ->   Phone char(10),
+    ->   Mem_type ENUM
+    ->   ('Regular', 'Silver', 'Gold',
+    ->    'Premium'
+    ->   )
+    -> );
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> ALTER TABLE Member
+    -> ADD CONSTRAINT Member_Email_UQ
+    ->   UNIQUE(Email);
+Query OK, 0 rows affected (0.08 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> DESCRIBE Member;
++----------+-------------------------------------------+------+-----+---------+----------------+
+| Field    | Type                                      | Null | Key | Default | Extra          |
++----------+-------------------------------------------+------+-----+---------+----------------+
+| MemberID | int(11)                                   | NO   | PRI | NULL    | auto_increment |
+| FName    | varchar(20)                               | NO   |     | NULL    |                |
+| MName    | varchar(10)                               | YES  |     | NULL    |                |
+| LName    | varchar(20)                               | NO   |     | NULL    |                |
+| Mem_DOJ  | date                                      | YES  |     | NULL    |                |
+| Email    | varchar(30)                               | YES  | UNI | NULL    |                |
+| Phone    | char(10)                                  | YES  |     | NULL    |                |
+| Mem_type | enum('Regular','Silver','Gold','Premium') | YES  |     | NULL    |                |
++----------+-------------------------------------------+------+-----+---------+----------------+
+8 rows in set (0.03 sec)
+
+mysql> INSERT INTO Member
+    -> (FName, MName, LName, Mem_DOJ,
+    -> Email, Phone, Mem_type)
+    -> VALUES
+    -> ('Ram',NULL,'King',NOW(),'abc@php.com','1235654489','Gold'
+    -> );
+Query OK, 1 row affected, 1 warning (0.03 sec)
+
+mysql> INSERT INTO Member
+    -> (FName, MName, LName, Mem_DOJ,
+    -> Email, Phone, Mem_type)
+    -> VALUES
+    -> ('Steven', NULL, 'King', NOW(),
+    ->   'SKing@adventureworks.com',
+    ->   '7323324509', 'Gold'
+    -> );
+Query OK, 1 row affected, 1 warning (0.02 sec)
+
+mysql> INSERT INTO Member
+    -> (FName, MName, LName, Mem_DOJ,
+    -> Email, Phone, Mem_type)
+    -> VALUES
+    -> ('Tammy', 'S', 'King', NOW(),
+    ->   NULL,
+    ->   '7323324509', 'Silver'
+    -> );
+Query OK, 1 row affected, 1 warning (0.03 sec)
+
+mysql> INSERT INTO Member
+    -> (FName, MName, LName, Mem_DOJ,
+    -> Email, Phone, Mem_type)
+    -> VALUES
+    -> ('Andy', 'J', 'Hillman',
+    ->  '2019-08-27', NULL,
+    ->   '8213761029', 'Silver'
+    -> );
+Query OK, 1 row affected (0.02 sec)
+
+mysql> SELECT *
+    ->   FROM Member;
++----------+--------+-------+---------+------------+--------------------------+------------+----------+
+| MemberID | FName  | MName | LName   | Mem_DOJ    | Email                    | Phone      | Mem_type |
++----------+--------+-------+---------+------------+--------------------------+------------+----------+
+|        1 | Ram    | NULL  | King    | 2019-08-27 | abc@php.com              | 1235654489 | Gold     |
+|        2 | Steven | NULL  | King    | 2019-08-27 | SKing@adventureworks.com | 7323324509 | Gold     |
+|        3 | Tammy  | S     | King    | 2019-08-27 | NULL                     | 7323324509 | Silver   |
+|        4 | Andy   | J     | Hillman | 2019-08-27 | NULL                     | 8213761029 | Silver   |
++----------+--------+-------+---------+------------+--------------------------+------------+----------+
+4 rows in set (0.00 sec)
+
+mysql> CREATE TABLE BookTran
+    -> (
+    ->   TrnID int AUTO_INCREMENT
+    ->     primary key,
+    ->   TrnDate datetime,
+    ->   BookID int REFERENCES
+    ->   Book(BookID),
+    ->   MemberID int,
+    ->   CONSTRAINT BookTran_MemberID_FK
+    ->    FOREIGN KEY(MemberID)
+    ->    REFERENCES Member(MemberID)
+    -> );
+Query OK, 0 rows affected (0.07 sec)
+
+mysql> DROP TABLE BookTran;
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> DESCRIBE BookTran;
+ERROR 1146 (42S02): Table 'asmnt2.booktran' doesn't exist
+mysql> DESCRIBE BookTran;
+ERROR 1146 (42S02): Table 'asmnt2.booktran' doesn't exist
+mysql>
+mysql> CREATE TABLE BookTran
+    -> (
+    ->   TrnID int AUTO_INCREMENT
+    ->     primary key,
+    ->   TrnDate datetime,
+    ->   BookID int,
+    ->   MemberID int,
+    ->
+    ->   CONSTRAINT BookTran_BookID_FK
+    ->    FOREIGN KEY(BookID)
+    ->    REFERENCES Book(BookID),
+    ->
+    ->   CONSTRAINT BookTran_MemberID_FK
+    ->    FOREIGN KEY(MemberID)
+    ->    REFERENCES Member(MemberID)
+    -> );
+Query OK, 0 rows affected (0.08 sec)
+
+mysql> DESCRIBE BookTran;
++----------+----------+------+-----+---------+----------------+
+| Field    | Type     | Null | Key | Default | Extra          |
++----------+----------+------+-----+---------+----------------+
+| TrnID    | int(11)  | NO   | PRI | NULL    | auto_increment |
+| TrnDate  | datetime | YES  |     | NULL    |                |
+| BookID   | int(11)  | YES  | MUL | NULL    |                |
+| MemberID | int(11)  | YES  | MUL | NULL    |                |
++----------+----------+------+-----+---------+----------------+
+4 rows in set (0.00 sec)
+
+mysql> INSERT INTO BookTran
+    -> (TrnDate, BookID, MemberID)
+    -> VALUES
+    -> (NOW(), 5, 12);
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`asmnt2`.`booktran`, CONSTRAINT `BookTran_MemberID_FK` FOREIGN KEY (`MemberID`) REFERENCES `member` (`MemberID`))
+mysql>
+mysql> INSERT INTO BookTran
+    -> (TrnDate, BookID, MemberID)
+    -> VALUES
+    -> (NOW(), 15, 20);
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`asmnt2`.`booktran`, CONSTRAINT `BookTran_BookID_FK` FOREIGN KEY (`BookID`) REFERENCES `book` (`BookID`))
+mysql> (NOW(), 15, 20);INSERT INTO BookTran
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'NOW(), 15, 20)' at line 1
+    -> (TrnDate, BookID, MemberID)
+    -> VALUES
+    -> (NOW(), 5, 12);
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`asmnt2`.`booktran`, CONSTRAINT `BookTran_MemberID_FK` FOREIGN KEY (`MemberID`) REFERENCES `member` (`MemberID`))
+mysql> INSERT INTO BookTran
+    -> (TrnDate, BookID, MemberID)
+    -> VALUES
+    -> (NOW(), 5, 12);
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`asmnt2`.`booktran`, CONSTRAINT `BookTran_MemberID_FK` FOREIGN KEY (`MemberID`) REFERENCES `member` (`MemberID`))
+mysql> DROP TABLE BookTran;
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> show tables;
++------------------+
+| Tables_in_asmnt2 |
++------------------+
+| book             |
+| datedatatype     |
+| member           |
+| numdatatype      |
+| productcategory  |
+| spldatatype      |
+| textdatatype     |
+| textdatatypes    |
++------------------+
+8 rows in set (0.01 sec)
+
+mysql> Create table BookTrans(
+    ->
+    -> Create table BookTran
+    -> (
+    ->  TrnID int Auto_increment
+    ->  primary key,
+    ->  TrnDate datetime,
+    ->  BookID int REFERENCES
+    ->  Book(BookID));
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Create table BookTran
+(
+ TrnID int Auto_increment
+ primary key,
+ TrnDate datetim' at line 3
+mysql> Create table BookTran
+    -> (
+    ->  TrnID int Auto_increment
+    ->  primary key,
+    ->  TrnDate datetime,
+    ->  BookID int REFERENCES
+    ->  Book(BookID));
+Query OK, 0 rows affected (0.09 sec)
+
+mysql> Describe BookTran;
++---------+----------+------+-----+---------+----------------+
+| Field   | Type     | Null | Key | Default | Extra          |
++---------+----------+------+-----+---------+----------------+
+| TrnID   | int(11)  | NO   | PRI | NULL    | auto_increment |
+| TrnDate | datetime | YES  |     | NULL    |                |
+| BookID  | int(11)  | YES  |     | NULL    |                |
++---------+----------+------+-----+---------+----------------+
+3 rows in set (0.00 sec)
+
+mysql> Insert into BookTran (TrnDate,BookID) values (NOW(),1);
+Query OK, 1 row affected (0.02 sec)
+
+mysql> Insert into BookTran (TrnDate,BookID) values (NOW(),2);
+Query OK, 1 row affected (0.06 sec)
+
+mysql> Insert into BookTran (TrnDate,BookID) values (NOW(),20);
+Query OK, 1 row affected (0.03 sec)
+
+mysql> Insert into BookTran (TrnDate,BookID) values (NOW(),152);
+Query OK, 1 row affected (0.02 sec)
+
+mysql> select * from BookTran;
++-------+---------------------+--------+
+| TrnID | TrnDate             | BookID |
++-------+---------------------+--------+
+|     1 | 2019-08-27 17:36:04 |      1 |
+|     2 | 2019-08-27 17:36:11 |      2 |
+|     3 | 2019-08-27 17:36:16 |     20 |
+|     4 | 2019-08-27 17:36:21 |    152 |
++-------+---------------------+--------+
+4 rows in set (0.00 sec)
+
+mysql> Show tables;
++------------------+
+| Tables_in_asmnt2 |
++------------------+
+| book             |
+| booktran         |
+| datedatatype     |
+| member           |
+| numdatatype      |
+| productcategory  |
+| spldatatype      |
+| textdatatype     |
+| textdatatypes    |
++------------------+
+9 rows in set (0.00 sec)
+
+mysql> select * from book;
++--------+-----------------------------+---------+
+| BookID | BookName                    | Price   |
++--------+-----------------------------+---------+
+|      1 | MySQL for dummies           |  350.00 |
+|      2 | MySQL for Developers        |  560.00 |
+|      3 | MySQL for Developers For TP | 5620.00 |
+|      5 | Java Unleashed              | -560.00 |
+|      6 | HTML5 Unleashed             |    NULL |
+|      7 | .Net Unleashed              |  100.00 |
++--------+-----------------------------+---------+
+6 rows in set (0.00 sec)
+
+mysql> select * from Member;
++----------+--------+-------+---------+------------+--------------------------+------------+----------+
+| MemberID | FName  | MName | LName   | Mem_DOJ    | Email                    | Phone      | Mem_type |
++----------+--------+-------+---------+------------+--------------------------+------------+----------+
+|        1 | Ram    | NULL  | King    | 2019-08-27 | abc@php.com              | 1235654489 | Gold     |
+|        2 | Steven | NULL  | King    | 2019-08-27 | SKing@adventureworks.com | 7323324509 | Gold     |
+|        3 | Tammy  | S     | King    | 2019-08-27 | NULL                     | 7323324509 | Silver   |
+|        4 | Andy   | J     | Hillman | 2019-08-27 | NULL                     | 8213761029 | Silver   |
++----------+--------+-------+---------+------------+--------------------------+------------+----------+
+4 rows in set (0.00 sec)
+
+mysql> select * from BookTran;
++-------+---------------------+--------+
+| TrnID | TrnDate             | BookID |
++-------+---------------------+--------+
+|     1 | 2019-08-27 17:36:04 |      1 |
+|     2 | 2019-08-27 17:36:11 |      2 |
+|     3 | 2019-08-27 17:36:16 |     20 |
+|     4 | 2019-08-27 17:36:21 |    152 |
++-------+---------------------+--------+
+4 rows in set (0.00 sec)
+
+mysql> Alter Table Book add column author varchar(40) not null;
+Query OK, 6 rows affected (0.14 sec)
+Records: 6  Duplicates: 0  Warnings: 0
+
+mysql> describe book;
++----------+--------------+------+-----+---------+----------------+
+| Field    | Type         | Null | Key | Default | Extra          |
++----------+--------------+------+-----+---------+----------------+
+| BookID   | int(11)      | NO   | PRI | NULL    | auto_increment |
+| BookName | varchar(50)  | NO   |     | NULL    |                |
+| Price    | decimal(6,2) | YES  |     | NULL    |                |
+| author   | varchar(40)  | NO   |     | NULL    |                |
++----------+--------------+------+-----+---------+----------------+
+4 rows in set (0.00 sec)
+
+mysql> Alter table book modify column author varchar(30) not null;
+Query OK, 6 rows affected (0.25 sec)
+Records: 6  Duplicates: 0  Warnings: 0
+
+mysql> describe book;
++----------+--------------+------+-----+---------+----------------+
+| Field    | Type         | Null | Key | Default | Extra          |
++----------+--------------+------+-----+---------+----------------+
+| BookID   | int(11)      | NO   | PRI | NULL    | auto_increment |
+| BookName | varchar(50)  | NO   |     | NULL    |                |
+| Price    | decimal(6,2) | YES  |     | NULL    |                |
+| author   | varchar(30)  | NO   |     | NULL    |                |
++----------+--------------+------+-----+---------+----------------+
+4 rows in set (0.00 sec)
+
+mysql> Alter table book drop column author;
+Query OK, 6 rows affected (0.12 sec)
+Records: 6  Duplicates: 0  Warnings: 0
+
+mysql> describe book;
++----------+--------------+------+-----+---------+----------------+
+| Field    | Type         | Null | Key | Default | Extra          |
++----------+--------------+------+-----+---------+----------------+
+| BookID   | int(11)      | NO   | PRI | NULL    | auto_increment |
+| BookName | varchar(50)  | NO   |     | NULL    |                |
+| Price    | decimal(6,2) | YES  |     | NULL    |                |
++----------+--------------+------+-----+---------+----------------+
+3 rows in set (0.00 sec)
+
+mysql> ALTER table member (Add Constrain mem_email_UQ UNIQUE(EMAIL));
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '(Add Constrain mem_email_UQ UNIQUE(EMAIL))' at line 1
+mysql> ALTER table member (Add Constrain mem_email_UQ UNIQUE(Email));
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '(Add Constrain mem_email_UQ UNIQUE(Email))' at line 1
+mysql> ALTER table member (Add Constraint mem_email_UQ UNIQUE(Email));
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '(Add Constraint mem_email_UQ UNIQUE(Email))' at line 1
+mysql> ALTER table member Add Constraint mem_email_UQ UNIQUE(Email);
+Query OK, 0 rows affected (0.07 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> describe Member;
++----------+-------------------------------------------+------+-----+---------+----------------+
+| Field    | Type                                      | Null | Key | Default | Extra          |
++----------+-------------------------------------------+------+-----+---------+----------------+
+| MemberID | int(11)                                   | NO   | PRI | NULL    | auto_increment |
+| FName    | varchar(20)                               | NO   |     | NULL    |                |
+| MName    | varchar(10)                               | YES  |     | NULL    |                |
+| LName    | varchar(20)                               | NO   |     | NULL    |                |
+| Mem_DOJ  | date                                      | YES  |     | NULL    |                |
+| Email    | varchar(30)                               | YES  | UNI | NULL    |                |
+| Phone    | char(10)                                  | YES  |     | NULL    |                |
+| Mem_type | enum('Regular','Silver','Gold','Premium') | YES  |     | NULL    |                |
++----------+-------------------------------------------+------+-----+---------+----------------+
+8 rows in set (0.00 sec)
+
+mysql> Select * from book;
++--------+-----------------------------+---------+
+| BookID | BookName                    | Price   |
++--------+-----------------------------+---------+
+|      1 | MySQL for dummies           |  350.00 |
+|      2 | MySQL for Developers        |  560.00 |
+|      3 | MySQL for Developers For TP | 5620.00 |
+|      5 | Java Unleashed              | -560.00 |
+|      6 | HTML5 Unleashed             |    NULL |
+|      7 | .Net Unleashed              |  100.00 |
++--------+-----------------------------+---------+
+6 rows in set (0.00 sec)
+
+mysql> select Price from Book where BookID = 7
+    -> ;
++--------+
+| Price  |
++--------+
+| 100.00 |
++--------+
+1 row in set (0.00 sec)
+
+mysql> Select BookId, BookName, Price * .10 AS Tax FROM Book where Price * .10 > 100;
++--------+-----------------------------+----------+
+| BookId | BookName                    | Tax      |
++--------+-----------------------------+----------+
+|      3 | MySQL for Developers For TP | 562.0000 |
++--------+-----------------------------+----------+
+1 row in set (0.03 sec)
+
+mysql> Select BookID, BookName, price from Book where BookName Like 'A%';
+Empty set (0.00 sec)
+
+mysql> Select BookID, BookName, price from Book where BookName Like 'M%';
++--------+-----------------------------+---------+
+| BookID | BookName                    | price   |
++--------+-----------------------------+---------+
+|      1 | MySQL for dummies           |  350.00 |
+|      2 | MySQL for Developers        |  560.00 |
+|      3 | MySQL for Developers For TP | 5620.00 |
++--------+-----------------------------+---------+
+3 rows in set (0.00 sec)
+
+mysql> Select BookID, BookName, price from Book where BookName Like '_____________';
+Empty set (0.00 sec)
+
+mysql>
